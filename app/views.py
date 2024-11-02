@@ -4,7 +4,6 @@ from Database import *
 
 app = Flask(__name__)
 
-
 @app.route("/healthcheck")
 def healthcheck():
     return jsonify(datetime.today(), "Service status: OK"), 200
