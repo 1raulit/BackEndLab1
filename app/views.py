@@ -39,6 +39,24 @@ def create_user():
 def get_users():
     return jsonify(list(users.values()))
 
+# Routes for Category
+@app.route('/category', methods=['GET'])
+def get_categories():
+    return jsonify(list(categories.values()))
+
+@app.route('/category', methods=['POST'])
+def create_category():
+    data = request.get_json()
+    category_id = generate_id(categories)
+    categories[category_id] = {'id': category_id, 'name': data['name']}
+    return jsonify(categories[category_id])
+
+@app.route('/category/<int:category_id>', methods=['DELETE'])
+def delete_category(category_id):
+    if category_id in categories:
+        del categories[category_id]
+        return jsonify({'message': 'Category deleted successfully'})
+    return jsonify({'error': 'Category not found'}), 404
 
 # Run the application
 if __name__ == '__main__':
