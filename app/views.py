@@ -1,9 +1,16 @@
-from flask import request, jsonify
+from flask import request, jsonify, Blueprint
 from datetime import datetime
 from app import Database as db
-from app import app
+from app.schemas import UserSchema, CategorySchema, RecordSchema
+from marshmallow import ValidationError
 
-@app.route("/healthcheck")
+lab2_bp = Blueprint('lab2', __name__)
+
+user_schema = UserSchema()
+category_schema = CategorySchema()
+record_schema = RecordSchema()
+
+@lab2_bp.route("/healthcheck")
 def healthcheck():
     return jsonify(datetime.today(), "Service status: OK"), 200
 
@@ -12,44 +19,54 @@ def generate_id(data_dict):
     return max(data_dict.keys(), default=0) + 1
 
 # Routes for User
-@app.route('/user/<int:user_id>', methods=['GET'])
+@lab2_bp.route('/user/<int:user_id>', methods=['GET'])
 def get_user(user_id):
     user = db.users.get(user_id)
     if not user:
         return jsonify({'error': 'User not found'}), 404
     return jsonify(user)
 
-@app.route('/user/<int:user_id>', methods=['DELETE'])
+@lab2_bp.route('/user/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
     if user_id in db.users:
         del db.users[user_id]
         return jsonify({'message': 'User deleted successfully'})
     return jsonify({'error': 'User not found'}), 404
 
-@app.route('/user', methods=['POST'])
+@lab2_bp.route('/user', methods=['POST'])
 def create_user():
     data = request.get_json()
+    try:
+        validated_data = user_schema.load(data)
+    except ValidationError as err:
+        return jsonify(err.messages), 400
+
     user_id = generate_id(db.users)
     db.users[user_id] = {'id': user_id, 'name': data['name']}
     return jsonify(db.users[user_id])
 
-@app.route('/users', methods=['GET'])
+@lab2_bp.route('/users', methods=['GET'])
 def get_users():
     return jsonify(list(db.users.values()))
 
 # Routes for Category
-@app.route('/category', methods=['GET'])
+@lab2_bp.route('/category', methods=['GET'])
 def get_categories():
     return jsonify(list(db.categories.values()))
 
-@app.route('/category', methods=['POST'])
+@lab2_bp.route('/category', methods=['POST'])
 def create_category():
     data = request.get_json()
+    try:
+        validated_data = category_schema.load(data)
+    except ValidationError as err:
+        return jsonify(err.messages), 400
+
     category_id = generate_id(db.categories)
     db.categories[category_id] = {'id': category_id, 'name': data['name']}
     return jsonify(db.categories[category_id])
 
-@app.route('/category/<int:category_id>', methods=['DELETE'])
+@lab2_bp.route('/category/<int:category_id>', methods=['DELETE'])
 def delete_category(category_id):
     if category_id in db.categories:
         del db.categories[category_id]
@@ -57,23 +74,28 @@ def delete_category(category_id):
     return jsonify({'error': 'Category not found'}), 404
 
 # Routes for Record
-@app.route('/record/<int:record_id>', methods=['GET'])
+@lab2_bp.route('/record/<int:record_id>', methods=['GET'])
 def get_record(record_id):
     record = db.records.get(record_id)
     if not record:
         return jsonify({'error': 'Record not found'}), 404
     return jsonify(record)
 
-@app.route('/record/<int:record_id>', methods=['DELETE'])
+@lab2_bp.route('/record/<int:record_id>', methods=['DELETE'])
 def delete_record(record_id):
     if record_id in db.records:
         del db.records[record_id]
         return jsonify({'message': 'Record deleted successfully'})
     return jsonify({'error': 'Record not found'}), 404
 
-@app.route('/record', methods=['POST'])
+@lab2_bp.route('/record', methods=['POST'])
 def create_record():
     data = request.get_json()
+    try:
+        validated_data = record_schema.load(data)
+    except ValidationError as err:
+        return jsonify(err.messages), 400
+
     record_id = generate_id(db.records)
     db.records[record_id] = {
         'id': record_id,
@@ -84,7 +106,7 @@ def create_record():
     }
     return jsonify(db.records[record_id])
 
-@app.route('/record', methods=['GET'])
+@lab2_bp.route('/record', methods=['GET'])
 def get_records():
     user_id = request.args.get('user_id')
     category_id = request.args.get('category_id')
