@@ -36,6 +36,9 @@ def create_account():
 @account_bp.route('/accounts/<int:user_id>', methods=['GET'])
 def get_account(user_id):
     account = Account.query.filter_by(user_id=user_id).first()
+    if not account:
+        return jsonify({"message": "Account not found"}), 404
+
     return jsonify({
         "account_id": account.id,
         "user_id": account.user_id,
