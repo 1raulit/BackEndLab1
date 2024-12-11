@@ -21,5 +21,7 @@ def create_app():
     app.register_blueprint(expense_routes.expense_bp)
     from app.routes import account_routes
     app.register_blueprint(account_routes.account_bp)
+    from app import views
+    app.register_blueprint(views.lab2_bp)
 
     return app

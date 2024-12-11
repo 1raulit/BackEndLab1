@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.models import db, Account
+from app.models import db, Account, Income, Expense
 from marshmallow import Schema, fields, ValidationError
 
 from app.schemas import AccountSchema

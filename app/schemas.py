@@ -15,11 +15,11 @@ class AccountSchema(Schema):
     user_id = fields.Integer(required=True)
 
 class IncomeSchema(Schema):
-    amount = fields.Float(required=True, validate=validate.Range(min=0.01))
+    amount = fields.Integer(required=True)
     description = fields.String(required=True, validate=validate.Length(min=3, max=255))
     date = fields.String(required=True)
 
 class ExpenseSchema(Schema):
-    amount = fields.Float(required=True, validate=validate.Range(min=0.01))
+    amount = fields.Integer(required=True)
     description = fields.String(required=True, validate=validate.Length(min=3, max=255))
     date = fields.String(required=True)
