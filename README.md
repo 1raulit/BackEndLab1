@@ -8,10 +8,10 @@
   3. відкрити cmd та перейти в склоновану папку
   4. пропишіть команду pip install -r requirements.txt, щоб встановити всі потрібні модулі
   5. Встановіть змінні середовища для підключення до бази даних:
-    POSTGRES_USER
-    POSTGRES_PASSWORD
-    POSTGRES_DB
-    DB_HOST
-  6. написати наступну команду: flask run --host 0.0.0.0 -p 5000
-  7. Надсилайте запити на http://localhost:5000
+       - POSTGRES_USER
+       - POSTGRES_PASSWORD
+       - POSTGRES_DB
+       - DB_HOST
+  7. написати наступну команду: flask run --host 0.0.0.0 -p 5000
+  8. Надсилайте запити на http://localhost:5000
 
