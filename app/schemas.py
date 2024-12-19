@@ -1,7 +1,9 @@
 from marshmallow import Schema, fields, validate
 
 class UserSchema(Schema):
-    name = fields.String(required=True)
+    id = fields.Int(dump_only=True)
+    username = fields.Str(required=True)
+    password = fields.Str(required=True, load_only=True)
 
 class CategorySchema(Schema):
     name = fields.String(required=True)
